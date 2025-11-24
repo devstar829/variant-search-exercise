@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from variant_search.models import Variant
+from variant_search.models import Variant, AuditLog
 from rest_framework import pagination, viewsets, filters
 from variant_search.serializers import GeneSerializer, VariantSerializer
 
@@ -19,6 +19,16 @@ class VariantViewSet(viewsets.ModelViewSet):
     serializer_class = VariantSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('gene', )
+    def perform_update(self, seralizer):
+        instance = self.get_object()
+        old_data = VariantSerializer(instance).data
+        variant = seralizer.save()
+        AuditLog.objects.create(
+            variant=variant,
+            action="updated",
+            old_version=old_data,
+            new_value=serializer.data
+        )
 
 
 class GeneViewSetPagination(pagination.PageNumberPagination):

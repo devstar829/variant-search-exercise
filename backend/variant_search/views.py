@@ -20,6 +20,11 @@ class VariantViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('gene', )
 
+    def perform_update(self, seralizer):
+        instance = self.get_object()
+        old_data = VariantSerializer(instance).data
+        variant = serializer.save()
+        
 
 class GeneViewSetPagination(pagination.PageNumberPagination):
     # Return a lot more gene values, since they are small

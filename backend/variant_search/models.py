@@ -26,4 +26,15 @@ class Variant(models.Model):
     reported_alt = models.CharField(max_length=512)
 
     class Meta:
-        ordering = ('gene',)
+        ordering=['gene']
+
+class AuditLog(models.Model):
+    variant = models.ForeignKey(Variant, on_delete=model.CASCADE, related_name="audit_logs")
+    action = models.CharField(max_length=50)
+    old_value = model.JSONField(null=True, blank=True)
+    new_value = model.JSONField(null=True, blank=True)
+    timestamp = models.DateTimeFiled(auto_now_add=True)  
+
+    
+    class Meta:
+        ordering = ['-timestamp']
